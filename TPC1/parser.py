@@ -1,5 +1,4 @@
-from person import Person
-from data import Data
+from data import Data, Person
 
 
 def is_sex(sex):
