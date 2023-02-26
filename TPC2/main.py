@@ -1,15 +1,15 @@
 def main():
-    str_num = ""
+    str_num = "0"
     sum = 0
     state = True
 
-    while inp:= input("> ").lower():
+    while inp := input("> ").lower():
+    
         for ind, char in enumerate(inp):
-            if char == "=":
-                print(f"Soma: {sum}")
+            last_pos = len(list(enumerate(inp)))-1
 
-            elif state:
-                if char.isdigit() and ind != len(list(enumerate(inp)))-1:
+            if state:
+                if char.isdigit() and ind != last_pos:
                     str_num += char
                     
                 elif inp[ind : ind+3] == "off":
@@ -24,6 +24,9 @@ def main():
 
             elif inp[ind : ind+2] == "on":
                 state = True
+            
+            if char == "=":
+                print(f"Soma: {sum}")
 
 
 if __name__ == '__main__':
