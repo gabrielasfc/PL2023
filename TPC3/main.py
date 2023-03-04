@@ -38,7 +38,7 @@ def names_per_century(data):
         last_name = re.search(r"\b[a-zA-Z]+$", entry["name"]).group()
 
         year = int(entry["b_year"])
-        century = year%100 + 1;
+        century = year//100 + 1;
 
         if century not in fst_names:
             fst_names[century] = dict()
@@ -77,10 +77,49 @@ def relationship_frequency(data):
     
 
 def data_to_json(data, file_path):
-    data = data[:20]
-
     with open(file_path, "w") as f:
-        json.dump(data, f)
+        json.dump(data[:20], f)
+
+
+def print_dict(data):
+    items = list(data.items())
+    items.sort(key=lambda p: p[1], reverse=True)
+
+    for item in items:
+        print(item)
+
+
+def print_names(fst_names, last_names):
+    fst_names_keys = list(fst_names.keys())
+    fst_names_keys.sort()
+    last_names_keys = list(last_names.keys())
+    last_names_keys.sort()
+
+    print("\n----------NOMES PRÓPRIOS----------")
+    for century in fst_names_keys:
+        print(f"Século {century}")
+
+        items = list(fst_names[century].items())
+        items.sort(key=lambda p: p[1], reverse=True)
+
+        for i in range(0,5):
+            print(items[i])
+                    
+        print()
+    print("----------------------------------")    
+
+    print("-------------APELIDOS-------------")
+    for century in last_names_keys:
+        print(f"Século {century}")
+
+        items = list(last_names[century].items())
+        items.sort(key=lambda p: p[1], reverse=True)
+                    
+        for i in range(0,5):
+            print(items[i])
+                    
+        print()
+    print("----------------------------------\n")
 
 
 def main():
@@ -100,13 +139,18 @@ def main():
 
         match opt:
             case 1:
-                print("\n" + str(processes_per_year(data)) + "\n")
+                print("\n---------------")
+                print_dict(processes_per_year(data))
+                print("---------------\n")
 
             case 2:
-                print("\n" + str(names_per_century(data)) + "\n")
+                fst_names, last_names = names_per_century(data)
+                print_names(fst_names, last_names)
 
             case 3:
-                print("\n" + str(relationship_frequency(data)) + "\n")
+                print("\n-------------------------")
+                print_dict(relationship_frequency(data))
+                print("-------------------------\n")
 
             case 4:
                 data_to_json(data, "data.json")
