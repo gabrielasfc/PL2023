@@ -3,15 +3,26 @@ import json
 
 
 def parse(file_path):
-    data = list()
+    valid_data = list()
 
     with open(file_path) as f:
-        reg_exp = re.compile(r"(?P<p_folder>\d+)::(?P<b_year>\d{4})\-(?P<b_month>\d{2})\-(?P<b_day>\d{2})::(?P<name>[a-zA-Z ]+)::(?P<f_name>[a-zA-Z ]+)::(?P<m_nome>[a-zA-Z ]+)::(?P<obs>.*)::")
-        
+        reg_exp = re.compile(r"(?P<p_folder>\d+)::(?P<b_year>\d{4})\-(?P<b_month>\d{2})\-(?P<b_day>\d{2})::(?P<name>[a-zA-Z ]+)::(?P<f_name>[a-zA-Z ]+)::(?P<m_nome>[a-zA-Z ]+)::(?P<obs>(?!Doc.danificado.).*)::")
         matches = reg_exp.finditer(f.read())
-        data += [match.groupdict() for match in matches]
 
-    return data
+        # remover linhas duplicadas
+        data = dict()
+
+        for match in matches:
+            if (folder := match["p_folder"]) in data:
+                if match.groupdict() not in data[folder]: 
+                    data[folder] += [match.groupdict()]
+
+            else: data[folder] = [match.groupdict()]
+        
+        for value in data.values():
+            valid_data += value
+
+    return valid_data
 
 
 def processes_per_year(data):
@@ -149,9 +160,9 @@ def main():
                 print_names(fst_names, last_names)
 
             case 3:
-                print("\n-------------------------")
+                print("\n--------------------------------")
                 print_dict(relationship_frequency(data))
-                print("-------------------------\n")
+                print("--------------------------------\n")
 
             case 4:
                 data_to_json(data, "data.json")
