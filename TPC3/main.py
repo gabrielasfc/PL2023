@@ -62,17 +62,18 @@ def names_per_century(data):
 def relationship_frequency(data):
     frequency = dict() # {relacao1: qtd, relacao2: qtd, ...}
 
+    reg_exp = re.compile(r"[a-zA-Z ]*,([A-Za-z ]*)\.[ ]*Proc\.[0-9]+\.")
+
     for entry in data:
         obs = entry["obs"]
+        matches = reg_exp.findall(obs)
 
-        if match := re.search(r"(?i)\b(pai|mae|filho|filha|irmao|irma|avo|neto|neta|tio|tia|sobrinho|sobrinha|primo|prima)\b", obs):
-            rel = match.group().lower()
-
+        for rel in matches:
             if rel not in frequency:
-                frequency[rel] = 1    
+                frequency[rel] = 1
             else:
                 frequency[rel] += 1
-    
+
     return frequency
     
 
